@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.web.mapper.CategoryMapper">
+    <resultMap id="CategoryBean" type="Category">
+        <id property="id" column="cid"></id>
+        <result property="name" column="cname"></result>
+        <collection property="products" ofType="Product" javaType="java.util.List">
+            <id property="id" column="pid"></id>
+            <result property="name" column="pname"></result>
+            <result property="price" column="price"></result>
+        </collection>
+    </resultMap>
+<!--  查询所有分类以及其中的产品  -->
+    <select id="listCategory" resultMap="CategoryBean">
+        select c.id cid,c.name cname,p.id pid,p.name pname,p.price from s_category c
+        left join s_product p
+        on c.id=p.cid
+    </select>
+    <!--查询某一分类及其产品-->
+    <select id="listCategory1" resultMap="CategoryBean">
+        select c.id cid,c.name cname,p.id pid,p.name pname,p.price from s_category c
+        left join s_product p
+        on c.id=p.cid
+        where c.id=#{id}
+    </select>
+</mapper>

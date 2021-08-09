@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.web.mapper.OrderItemMapper">
+    <resultMap id="orderitemBean" type="OrderItem">
+        <id column="oiid" property="id"></id>
+        <result property="number" column="number"></result>
+        <association property="order" javaType="Order">
+            <id column="oid" property="id"></id>
+            <result property="code" column="code"></result>
+        </association>
+        <association property="product" javaType="Product">
+            <id column="pid" property="id"></id>
+            <result property="name" column="name"></result>
+            <result property="price" column="price"></result>
+        </association>
+    </resultMap>
+    <select id="orderItemlist" resultMap="orderitemBean">
+        select o.id oid,o.code,oi.id oiid,oi.number,p.id pid,p.name,p.price from s_order o
+        left join s_orderitem oi on o.id=oi.oid
+        left join s_product p on oi.pid=p.id
+    </select>
+<!--  通过id删除整个order信息  -->
+    <delete id="deleteOrder">
+        delete oi,o from s_orderitem oi
+        left join s_order o
+        on oi.oid=o.id
+        where o.id=#{id}
+    </delete>
+<!--  删除某个订单中的某个产品  -->
+    <delete id="deleteOrderProduct">
+        delete from s_orderitem
+        where oid=#{oid} and pid=#{pid}
+    </delete>
+<!--  更新指定id的number以及order中的code  -->
+    <update id="update">
+        update s_orderitem
+        inner join s_order
+        on s_orderitem.oid=s_order.id
+        <set>
+            <if test="number!=null">
+                s_orderitem.number=#{number}
+            </if>
+            <if test="code!=null">
+                s_order.code=#{code}
+            </if>
+        </set>
+        where s_orderitem.id=#{id}
+    </update>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.web.mapper.YspMapper">
+    <select id="selectYsp" resultType="Ysp">
+        select x.sbid,x.sbmc,
+        (convert(x.ch4,decimal(10,2))-convert(d.ch4,decimal(10,2))) as ch4,
+        (convert(x.c2h4,decimal(10,2))-convert(d.c2h4,decimal(10,2))) as c2h4,
+        (convert(x.c2h6,decimal(10,2))-convert(d.c2h6,decimal(10,2))) as c2h6,
+        (convert(x.c2h2,decimal(10,2))-convert(d.c2h2,decimal(10,2))) as c2h2,
+        (convert(x.h2,decimal(10,2))-convert(d.h2,decimal(10,2))) as h2,
+        (convert(x.co,decimal(10,2))-convert(d.co,decimal(10,2))) as co,
+        (convert(x.co2,decimal(10,2))-convert(d.co2,decimal(10,2))) as co2,
+        (convert(x.wl,decimal(10,2))-convert(d.wl,decimal(10,2))) as wl,
+        (convert(x.zt,decimal(10,2))-convert(d.zt,decimal(10,2))) as zt,
+        (convert(x.zkr,decimal(10,2))-convert(d.zkr,decimal(10,2))) as zkr,
+        (convert(x.dqfh,decimal(10,2))-convert(d.dqfh,decimal(10,2))) as dqfh
+        from
+        (select * from t_ysp_data where occur_time in (select max(occur_time) from t_ysp_data where DATEDIFF(#{time},date(occur_time))&lt;7 and DATEDIFF(#{time},date(occur_time))>0 group by sbid)) as x
+        left join
+        (select * from t_ysp_data where occur_time in (select max(occur_time) from t_ysp_data where DATEDIFF(#{time},date(occur_time))>6 group by sbid)) as d
+        on x.sbid=d.sbid
+    </select>
+    <select id="selectLeast" resultType="Ysp">
+        select * from t_ysp_data where occur_time in (select max(occur_time) from t_ysp_data group by sbid)
+    </select>
+    <select id="selectOld" resultType="Ysp">
+        select a.* from t_ysp_data as a,
+        (select a.sbid as sbid,max(a.occur_time) as maxtime from t_ysp_data as a,(select sbid,max(occur_time) as maxtime from t_ysp_data group by sbid) as b
+        where a.sbid=b.sbid and a.occur_time&lt;date_sub(b.maxtime,interval 7 day)
+        group by a.sbid) as b
+        where a.sbid=b.sbid and a.occur_time=b.maxtime
+    </select>
+
+    <select id="selectBySQL" resultType="Ysp">
+        select x.sbid,x.sbmc,d.occur_time,
+        (convert(x.ch4,decimal(10,2))-convert(d.ch4,decimal(10,2))) as ch4,
+        (convert(x.c2h4,decimal(10,2))-convert(d.c2h4,decimal(10,2))) as c2h4,
+        (convert(x.c2h6,decimal(10,2))-convert(d.c2h6,decimal(10,2))) as c2h6,
+        (convert(x.c2h2,decimal(10,2))-convert(d.c2h2,decimal(10,2))) as c2h2,
+        (convert(x.h2,decimal(10,2))-convert(d.h2,decimal(10,2))) as h2,
+        (convert(x.co,decimal(10,2))-convert(d.co,decimal(10,2))) as co,
+        (convert(x.co2,decimal(10,2))-convert(d.co2,decimal(10,2))) as co2,
+        (convert(x.wl,decimal(10,2))-convert(d.wl,decimal(10,2))) as wl,
+        (convert(x.zt,decimal(10,2))-convert(d.zt,decimal(10,2))) as zt,
+        (convert(x.zkr,decimal(10,2))-convert(d.zkr,decimal(10,2))) as zkr,
+        (convert(x.dqfh,decimal(10,2))-convert(d.dqfh,decimal(10,2))) as dqfh
+        from
+        (select a.* from t_ysp_data as a,
+        (select a.sbid as sbid,max(a.occur_time) as maxtime from t_ysp_data as a,(select sbid,max(occur_time) as maxtime from t_ysp_data group by sbid) as b
+        where a.sbid=b.sbid and a.occur_time&lt;date_sub(b.maxtime,interval 7 day)
+        group by a.sbid) as b
+        where a.sbid=b.sbid and a.occur_time=b.maxtime) as x
+        left join
+        (select a.* from t_ysp_data as a,(select sbid,max(occur_time) as maxtime from t_ysp_data group by sbid) as b
+        where a.sbid=b.sbid and a.occur_time=b.maxtime) as d
+        on x.sbid=d.sbid
+    </select>
+    <select id="selectBySQL2" resultType="Ysp">
+        select * from
+        (select x.sbid,x.sbmc,d.occur_time,
+        (convert(d.ch4,decimal(10,2))-convert(x.ch4,decimal(10,2))) as ch4,
+        (convert(d.c2h4,decimal(10,2))-convert(x.c2h4,decimal(10,2))) as c2h4,
+        (convert(d.c2h6,decimal(10,2))-convert(x.c2h6,decimal(10,2))) as c2h6,
+        (convert(d.c2h2,decimal(10,2))-convert(x.c2h2,decimal(10,2))) as c2h2,
+        (convert(d.h2,decimal(10,2))-convert(x.h2,decimal(10,2))) as h2,
+        (convert(d.co,decimal(10,2))-convert(x.co,decimal(10,2))) as co,
+        (convert(d.co2,decimal(10,2))-convert(x.co2,decimal(10,2))) as co2,
+        (convert(d.wl,decimal(10,2))-convert(x.wl,decimal(10,2))) as wl,
+        (convert(d.zt,decimal(10,2))-convert(x.zt,decimal(10,2))) as zt,
+        (convert(d.zkr,decimal(10,2))-convert(x.zkr,decimal(10,2))) as zkr,
+        (convert(d.dqfh,decimal(10,2))-convert(x.dqfh,decimal(10,2))) as dqfh
+        from
+        (select a.* from t_ysp_data as a,
+        (select a.sbid as sbid,max(a.occur_time) as maxtime from t_ysp_data as a,(select sbid,max(occur_time) as maxtime from t_ysp_data group by sbid) as b
+        where a.sbid=b.sbid and a.occur_time&lt;date_sub(b.maxtime,interval 7 day)
+        group by sbid) as b
+        where a.sbid=b.sbid and a.occur_time=b.maxtime) as x
+        left join
+        (select a.* from t_ysp_data as a,(select sbid,max(occur_time) as maxtime from t_ysp_data group by sbid) as b
+        where a.sbid=b.sbid and a.occur_time=b.maxtime) as d
+        on x.sbid=d.sbid
+        union
+        select a.sbid,sbmc,occur_time,ch4,c2h4,c2h6,c2h2,h2,co,co2,wl,zt,zkr,dqfh from t_ysp_data as a,
+        (select sbid,min(s.maxtime) as maxtime from
+        (select a.sbid,max(a.occur_time) as maxtime from t_ysp_data as a,(select sbid,max(occur_time) as maxtime from t_ysp_data group by sbid) as b
+        where a.sbid=b.sbid and a.occur_time&lt;date_sub(b.maxtime,interval 7 day)
+        group by sbid
+        union select sbid,max(occur_time) as maxtime from t_ysp_data group by sbid) as s
+        group by sbid
+        ) as b
+        where a.occur_time=b.maxtime) as a
+        group by sbid
+    </select>
+
+    <select id="selectNewById" resultType="Ysp">
+        select obj_id,sbid,sbmc,occur_time,
+        convert(ch4,decimal(10,4)) as ch4,
+        convert(c2h4,decimal(10,4)) as c2h4,
+        convert(c2h6,decimal(10,4)) as c2h6,
+        convert(c2h2,decimal(10,4)) as c2h2,
+        convert(h2,decimal(10,4)) as h2,
+        convert(co,decimal(10,4)) as co,
+        convert(co2,decimal(10,4)) as co2,
+        ifnull(convert(wl,decimal(10,4)),0) as wl,
+        convert(zt,decimal(10,4)) as zt,
+        ifnull(convert(zkr,decimal(10,4)),0) as zkr,
+        ifnull(convert(dqfh,decimal(10,4)),0) as dqfh
+        from t_ysp_data
+        where occur_time=(select max(occur_time) from t_ysp_data where sbid=#{sbid}) and sbid=#{sbid}
+    </select>
+    <select id="selectOldById" resultType="Ysp">
+        select obj_id,sbid,sbmc,occur_time,
+        convert(ch4,decimal(10,4)) as ch4,
+        convert(c2h4,decimal(10,4)) as c2h4,
+        convert(c2h6,decimal(10,4)) as c2h6,
+        convert(c2h2,decimal(10,4)) as c2h2,
+        convert(h2,decimal(10,4)) as h2,
+        convert(co,decimal(10,4)) as co,
+        convert(co2,decimal(10,4)) as co2,
+        ifnull(convert(wl,decimal(10,4)),0) as wl,
+        convert(zt,decimal(10,4)) as zt,
+        ifnull(convert(zkr,decimal(10,4)),0) as zkr,
+        ifnull(convert(dqfh,decimal(10,4)),0) as dqfh
+        from t_ysp_data,(select max(occur_time) as maxtime from t_ysp_data where sbid=#{sbid}) as a
+        where occur_time=(select max(occur_time) from t_ysp_data
+        where sbid=#{sbid} and occur_time&lt;date_sub(a.maxtime,interval 7 day)) and sbid=#{sbid}
+    </select>
+    <select id="selectSbid" resultType="String">
+        select sbid from t_ysp_data group by sbid
+    </select>
+</mapper>

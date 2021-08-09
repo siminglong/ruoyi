@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.web.mapper.PzMapper">
+    <resultMap id="map" type="Pz">
+        <result column="ankjf" property="ankjf"></result>
+        <result column="zhuqsbgzjgxs" property="zhuqsbgzjgxs"></result>
+        <result column="jiszkpd" property="jiszkpd"></result>
+        <result column="daolxzdj" property="daolxzdj"></result>
+        <result column="shifwq" property="shifwq"></result>
+        <result column="num" property="num"></result>
+        <result column="type" property="type"></result>
+    </resultMap>
+
+    <!-- 按跨径分类统计 -->
+    <select id="ankjfl" resultMap="map">
+        select ankjf,count(*) as num from pz_qiaoliangmx_shenggx group by ankjf,niand having niand=#{niand}
+    </select>
+    <!-- 按结构形式分类统计 -->
+    <select id="zhuqsbgzjgxs" resultMap="map">
+        select zhuqsbgzjgxs,count(*) as num from pz_qiaoliangmx_shenggx group by zhuqsbgzjgxs,niand having niand=#{niand}
+    </select>
+    <!-- 按技术状况分类统计 -->
+    <select id="jiszkpd" resultMap="map">
+        select jiszkpd,count(*) as num from pz_qiaoliangmx_shenggx group by jiszkpd,niand having niand=#{niand}
+    </select>
+    <!-- 按公路类别分类统计 -->
+    <select id="daolxzdj" resultMap="map">
+        select daolxzdj,count(*) as num from pz_qiaoliangmx_shenggx group by daolxzdj,niand having niand=#{niand}
+    </select>
+    <!-- 按危桥数量分类统计 -->
+    <select id="shifwq" resultMap="map">
+        select shifwq,count(*) as num from pz_qiaoliangmx_shenggx group by shifwq,niand having niand=#{niand}
+    </select>
+
+    <select id="all" resultMap="map">
+        select ${column},count(*) as num from pz_qiaoliangmx_shenggx group by ${column},niand having niand=#{niand}
+    </select>
+</mapper>

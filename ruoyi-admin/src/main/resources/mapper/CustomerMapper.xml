@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.web.mapper.CustomerMapper">
+<!--    <resultMap id="Customer" type="Customer">-->
+<!--        <id property="id" column="id"></id>-->
+<!--        <result property="name" column="name"></result>-->
+<!--        <result property="phone" column="phone"></result>-->
+<!--    </resultMap>-->
+    <select id="findCustomer" parameterType="Integer" resultType="Customer">
+        select * from customer where id = #{id}
+    </select>
+    <select id="selectCustomerList" parameterType="Customer" resultType="Customer">
+        select id,name,phone from customer
+    </select>
+    <insert id="createCustomer" parameterType="Customer">
+        insert into customer (name, phone) values (#{name}, #{phone})
+    </insert>
+    <delete id="deleteCustomer" parameterType="Integer">
+        delete from customer where id = #{id}
+    </delete>
+    <update id="updateCustomer" parameterType="customer">
+        update customer
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="phone!=null">
+                phone=#{phone},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>
